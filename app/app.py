@@ -5,12 +5,11 @@ CMSC 461 · production-hardened build.
 Run:  streamlit run app.py
 Config comes from environment variables (see db.py / .env.example).
 """
-import os
 from datetime import datetime, date, timedelta
 
 import streamlit as st
 
-from db import run_query, run_readonly
+from db import run_query, run_readonly, admin_password, ensure_schema
 
 # ============================================================
 # PAGE CONFIG
@@ -56,7 +55,7 @@ def require_login():
     if st.session_state.get("authed"):
         return
     st.markdown("<h2 style='color:#c41230'>🐾 UMBC Parking Admin — Sign in</h2>", unsafe_allow_html=True)
-    expected = os.getenv("APP_ADMIN_PASSWORD", "admin")
+    expected = admin_password()
     with st.form("login"):
         pwd = st.text_input("Admin password", type="password")
         if st.form_submit_button("Sign in", type="primary"):
@@ -71,11 +70,13 @@ def require_login():
 
 require_login()
 
-# Fail fast with a friendly message if the DB is unreachable.
+# Fail fast with a friendly message if the DB is unreachable, and self-provision
+# the schema + seed on first boot (so an empty cloud DB just works).
 try:
     run_query("SELECT 1;")
+    ensure_schema()
 except Exception as e:
-    st.error(f"Cannot reach the database. Is Postgres running / is DB_HOST correct?\n\n{e}")
+    st.error(f"Cannot reach or initialise the database. Check the DATABASE_URL / DB_* settings.\n\n{e}")
     st.stop()
 
 # ============================================================

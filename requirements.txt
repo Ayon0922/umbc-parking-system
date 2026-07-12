@@ -1,0 +1,5 @@
+# Root requirements — used by Streamlit Community Cloud (it reads repo-root).
+# Local/Docker installs from app/requirements.txt; keep the two in sync.
+streamlit==1.39.0
+psycopg2-binary==2.9.9
+pandas==2.2.2

@@ -1,5 +1,8 @@
 # Root requirements — used by Streamlit Community Cloud (it reads repo-root).
 # Local/Docker installs from app/requirements.txt; keep the two in sync.
+# Versions chosen to have prebuilt wheels for Python 3.12 AND 3.13
+# (Streamlit Cloud defaults to 3.13, which has no wheels for pandas<=2.2.2
+#  or psycopg2-binary<=2.9.9 — that caused "Error installing requirements").
 streamlit==1.39.0
-psycopg2-binary==2.9.9
-pandas==2.2.2
+psycopg2-binary==2.9.10
+pandas==2.2.3

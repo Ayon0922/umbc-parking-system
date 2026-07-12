@@ -4,6 +4,16 @@ A parking-operations database with a web admin console. PostgreSQL schema
 (triggers, stored routines, views), a Streamlit UI, and a one-command Docker
 stack. CMSC 461 — production-hardened build.
 
+**Live demo:** [umbc-psapp.streamlit.app](https://umbc-psapp.streamlit.app) — login password: `admin`
+
+## Screenshots
+
+| Dashboard (KPIs + live DB views) | Lots & Sensor Simulation (trigger demo) |
+|---|---|
+| ![Dashboard](docs/screenshots/01-dashboard.png) | ![Lots & Sensors](docs/screenshots/02-lots-sensors.png) |
+| **Live SQL Reports** | **Concurrency / Double-Booking Demo** |
+| ![SQL Reports](docs/screenshots/03-sql-reports.png) | ![Concurrency Demo](docs/screenshots/04-concurrency-demo.png) |
+
 ## Stack
 
 | Service | What | URL |

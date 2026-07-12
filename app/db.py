@@ -51,6 +51,11 @@ def admin_password():
     return _secret("APP_ADMIN_PASSWORD", "admin")
 
 
+def auth_required():
+    """Set APP_REQUIRE_AUTH=false to open the app without a login (demo/dev)."""
+    return str(_secret("APP_REQUIRE_AUTH", "true")).lower() != "false"
+
+
 @st.cache_resource(show_spinner="Connecting to database…")
 def get_connection():
     """Return a single cached psycopg2 connection (autocommit off)."""

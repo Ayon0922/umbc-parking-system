@@ -9,7 +9,7 @@ from datetime import datetime, date, timedelta
 
 import streamlit as st
 
-from db import run_query, run_readonly, admin_password, ensure_schema
+from db import run_query, run_readonly, admin_password, ensure_schema, auth_required
 
 # ============================================================
 # PAGE CONFIG
@@ -52,6 +52,9 @@ def metric_card(label, value, color="#1f77b4"):
 # LOGIN GATE  (simple shared-secret; set APP_ADMIN_PASSWORD in env)
 # ============================================================
 def require_login():
+    if not auth_required():
+        st.session_state["authed"] = True
+        return
     if st.session_state.get("authed"):
         return
     st.markdown("<h2 style='color:#c41230'>🐾 UMBC Parking Admin — Sign in</h2>", unsafe_allow_html=True)

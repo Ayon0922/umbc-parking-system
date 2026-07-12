@@ -1,0 +1,60 @@
+# =============================================================================
+# UMBC Parking Management System — full stack
+#   db      : PostgreSQL 15, schema + seed auto-loaded on first boot
+#   app     : Streamlit admin console (this repo's app/)
+#   pgadmin : optional web DB client
+# All credentials are read from .env (copy .env.example -> .env first).
+# =============================================================================
+services:
+  db:
+    image: postgres:15
+    container_name: umbc_parking_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-umbc_admin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-umbc_password}
+      POSTGRES_DB: ${DB_NAME:-parking_db}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # Auto-run in filename order on first initialisation of an empty volume.
+      - ./db/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-umbc_admin} -d ${DB_NAME:-parking_db}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: ./app
+    container_name: umbc_parking_app
+    restart: unless-stopped
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-parking_db}
+      DB_USER: ${DB_USER:-umbc_admin}
+      DB_PASSWORD: ${DB_PASSWORD:-umbc_password}
+      APP_ADMIN_PASSWORD: ${APP_ADMIN_PASSWORD:-admin}
+    ports:
+      - "${APP_PORT:-8501}:8501"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: umbc_pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL:-admin@umbc.edu}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD:-admin}
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
